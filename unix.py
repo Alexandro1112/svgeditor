@@ -164,7 +164,7 @@ class SvgImageSurface:
         ]
         self.cairo.cairo_surface_write_to_png_stream.restype = c_int
 
-        #self.cairo.cairo_status_to_string.argtypes = [c_void_p]  # deprecated in pre commits
+        #self.cairo.cairo_status_to_string.argtypes = [c_void_p]  # deprecated in 0.0.1 version
         #self.cairo.cairo_status_to_string.restype = c_void_p
 
         # RSVG function definitions
@@ -203,9 +203,9 @@ class SvgImageSurface:
                 byref(error)
             )
         if not handle:
-            raise CairoRenderError(f"Error loading SVG: {self.cairo.cairo_status_to_string(error)}")
+            raise CairoRenderError(f'Error loading SVG: {self.cairo.cairo_status_to_string(error)}')
 
-        surface_format = 0x0000 if not self.save_bg else 0x0002  # ARGB32 (with alpha) vs RGB24 (no alpha)
+        surface_format = 0x0000 if not self.save_bg else 0x0001  # ARGB32 (with alpha) vs RGB24 (no alpha)
         surface = self.cairo.cairo_image_surface_create(
             surface_format,
             int(self.width),
@@ -237,7 +237,7 @@ class SvgImageSurface:
     def _save(self) -> int:
         """Render SVG to PNG file."""
         if not self.to_file:
-            raise ValueError("Output file path not specified")
+            raise ValueError('Output file path not specified')
 
         handle, context, surface = self._render()
         try:
@@ -246,7 +246,7 @@ class SvgImageSurface:
                 self.to_file.encode()
             )
             if status != 0:
-                raise CairoRenderError(f"PNG write failed with status: {hex(status)}")
+                raise CairoRenderError(f'PNG write failed with status: {hex(status)}')
         finally:
             self._cleanup_resources(handle, context, surface)
 
@@ -268,7 +268,7 @@ class SvgImageSurface:
                 None
             )
             if status != 0:
-                raise CairoRenderError(f"PNG stream failed with status: {hex(status)}")
+                raise CairoRenderError(f'PNG stream failed with status: {hex(status)}')
 
             return buffer.getvalue()
         finally:
